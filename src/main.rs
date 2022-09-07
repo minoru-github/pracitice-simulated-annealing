@@ -1,6 +1,5 @@
 #![allow(unused)]
 use itertools::Itertools;
-use my_lib::XY;
 use num::{integer::Roots, Integer, ToPrimitive};
 use proconio::{
     input,
@@ -30,30 +29,116 @@ mod solver {
     use super::*;
 
     pub fn mountain(input: &Input) -> State {
-        let update_state = |best_score: &mut usize, state: &mut State, old_state: &State| {
-            if *best_score > state.score {
-                *best_score = state.score.clone();
+        let update_state = |best_state: &mut State, state: &mut State| {
+            if best_state.score > state.score {
+                best_state.score = state.score.clone();
             } else {
-                *state = (*old_state).clone();
+                *state = best_state.clone();
             }
         };
 
+        let debug = |best_state: &State, state: &State| {
+            eprintln!(
+                "x : {}, score {}, best_x:{}, best_score:{}",
+                state.x, state.score, best_state.x, best_state.score
+            );
+        };
+
+        let sim = Sim::new(&input);
+
         let mut rng: Mcg128Xsl64 = rand_pcg::Pcg64Mcg::new(890482);
 
-        let mut best_score = 0;
         let mut state = State::new(&input);
+        let mut best_state = state.clone();
         while time::update() < 0.3 {
-            let old_state = state.clone();
+            best_state = state.clone();
 
             // 近傍探索
+            sim.walk(&mut state, &mut rng);
 
             // スコア計算
+            sim.compute_score(&mut state);
 
-            update_state(&mut best_score, &mut state, &old_state);
+            debug(&best_state, &state);
+
+            update_state(&mut best_state, &mut state);
         }
 
         state
     }
+}
+
+#[derive(Debug, Clone)]
+pub struct State {
+    x: CostType,
+    score: CostType,
+}
+
+impl State {
+    fn new(input: &Input) -> Self {
+        State {
+            x: input.initial_x,
+            score: CostType::max_value(),
+        }
+    }
+
+    fn output(&self) {
+        eprintln!("x: {}, score: {}", self.x, self.score);
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Sim {
+    cost_function: ConvexFunction,
+}
+
+impl Sim {
+    fn new(input: &Input) -> Self {
+        Sim {
+            cost_function: ConvexFunction::new(1, 20, 0),
+        }
+    }
+
+    fn walk(&self, state: &mut State, rng: &mut Mcg128Xsl64) {
+        let val = rng.gen_range(-3, 4);
+        state.x += val;
+    }
+
+    fn compute_score(&self, state: &mut State) {
+        state.score = self.cost_function.f(state.x).unwrap();
+        //eprintln!("x : {}, score {} ", state.x, state.score);
+    }
+}
+
+type CostType = i64;
+pub trait CostFunction {
+    type Type;
+    fn f(self, x: Self::Type) -> Option<Self::Type>;
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct ConvexFunction {
+    // y = a * (x - p)^2 + q
+    a: CostType,
+    p: CostType,
+    q: CostType,
+}
+
+impl ConvexFunction {
+    fn new(a: CostType, p: CostType, q: CostType) -> Self {
+        ConvexFunction { a, p, q }
+    }
+}
+
+impl CostFunction for ConvexFunction {
+    type Type = CostType;
+    fn f(self, x: Self::Type) -> Option<Self::Type> {
+        Some(self.a * (x - self.p) * (x - self.p) + self.q)
+    }
+}
+
+mod my_lib {
+    use super::*;
 }
 
 mod time {
@@ -78,7 +163,7 @@ mod time {
 
 #[derive(Debug, Clone)]
 pub struct Input {
-    n: usize,
+    initial_x: CostType,
 }
 
 impl Input {
@@ -91,10 +176,10 @@ impl Input {
         // s_vec : [String; n]
         // bytes : Bytes ← Vec<u8>
         input! {
-            n:usize,
+            initial_x:CostType,
         };
 
-        Input { n }
+        Input { initial_x }
     }
 
     fn debug(result: &Result<Input, &str>) {
@@ -102,78 +187,15 @@ impl Input {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct State {
-    score: usize,
-}
+#[cfg(test)]
+mod tests {
+    use crate::{ConvexFunction, CostFunction};
 
-impl State {
-    fn new(input: &Input) -> Self {
-        State { score: 0 }
-    }
-
-    fn output(&self) {
-        eprintln!("{}", self.score);
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct Sim {
-    n: usize,
-}
-
-impl Sim {
-    fn new(input: &Input) -> Self {
-        Sim { n: input.n }
-    }
-}
-
-mod my_lib {
-    use super::*;
-    #[derive(Debug, Clone, PartialEq)]
-    pub struct XY {
-        y: usize, // ↓
-        x: usize, // →
-        width: usize,
-    }
-
-    impl XY {
-        pub fn new(x: usize, y: usize, width: usize) -> Self {
-            XY { x, y, width }
-        }
-
-        pub fn to_1d(&self) -> usize {
-            self.y * self.width + self.x
-        }
-
-        pub fn to_2d(index: usize, width: usize) -> Self {
-            XY {
-                x: index % width,
-                y: index / width,
-                width,
-            }
-        }
-    }
-
-    impl Add for XY {
-        type Output = Result<XY, &'static str>;
-        fn add(self, rhs: Self) -> Self::Output {
-            let (x, y) = if cfg!(debug_assertions) {
-                // debugではオーバーフローでpanic発生するため、オーバーフローの溢れを明確に無視する(※1.60場合。それ以外は不明)
-                (self.x.wrapping_add(rhs.x), self.y.wrapping_add(rhs.y))
-            } else {
-                (self.x + rhs.x, self.y + rhs.y)
-            };
-
-            if x >= self.width || y >= self.width {
-                Err("out of range")
-            } else {
-                Ok(XY {
-                    x,
-                    y,
-                    width: self.width,
-                })
-            }
-        }
+    #[test]
+    fn convex_test() {
+        let cf = ConvexFunction::new(1, 20, 0);
+        assert_eq!(cf.f(0).unwrap(), 400);
+        assert_eq!(cf.f(20).unwrap(), 0);
+        assert_eq!(cf.f(30).unwrap(), 100);
     }
 }
