@@ -14,10 +14,8 @@ use std::{
 };
 use superslice::Ext;
 
-use crate::state::State;
-
 pub mod mountain {
-    use crate::state::State;
+    use crate::sim::state::State;
     pub fn update_state(best_state: &mut State, state: &mut State) {
         if best_state.score > state.score {
             best_state.score = state.score.clone();

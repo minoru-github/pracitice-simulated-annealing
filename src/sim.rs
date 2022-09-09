@@ -14,11 +14,16 @@ use std::{
 };
 use superslice::Ext;
 
-use crate::cost_function::{ConvexFunction, CostFunction};
-use crate::input::Input;
-use crate::solver::mountain;
-use crate::state::State;
-use crate::time;
+mod cost_function;
+mod input;
+mod solver;
+mod state;
+mod time;
+
+use cost_function::{ConvexFunction, CostFunction};
+use input::Input;
+use solver::mountain;
+use state::State;
 
 #[derive(Debug, Clone)]
 pub struct Sim {

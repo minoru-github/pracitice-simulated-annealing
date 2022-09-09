@@ -1,5 +1,5 @@
-use crate::cost_function::CostType;
-use crate::input::Input;
+use crate::sim::cost_function::CostType;
+use crate::sim::input::Input;
 
 #[derive(Debug, Clone)]
 pub struct State {

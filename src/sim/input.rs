@@ -1,6 +1,6 @@
 use proconio::input;
 
-use crate::cost_function::CostType;
+use crate::sim::cost_function::CostType;
 
 #[derive(Debug, Clone)]
 pub struct Input {
