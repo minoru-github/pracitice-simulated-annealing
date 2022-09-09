@@ -1,4 +1,18 @@
+#![allow(unused)]
+use itertools::Itertools;
+use num::{integer::Roots, Integer, ToPrimitive};
+
+use rand::prelude::*;
 use rand_pcg::Mcg128Xsl64;
+use std::{
+    clone,
+    collections::{BTreeMap, BTreeSet, BinaryHeap, VecDeque},
+    iter::FromIterator,
+    ops::Range,
+    ops::*,
+    slice::SliceIndex,
+};
+use superslice::Ext;
 
 use crate::time;
 use crate::input::Input;
@@ -23,7 +37,7 @@ pub fn mountain() {
         );
     };
 
-    let sim = Sim::new(&input);
+    let sim = Sim::new();
 
     let mut rng: Mcg128Xsl64 = rand_pcg::Pcg64Mcg::new(890482);
 

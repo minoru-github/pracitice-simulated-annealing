@@ -1,8 +1,7 @@
 use rand::prelude::*;
 use rand_pcg::Mcg128Xsl64;
 
-use crate::cost_function::{ConvexFunction, CostFunction, CostType};
-use crate::input::Input;
+use crate::cost_function::{ConvexFunction, CostFunction};
 use crate::state::State;
 
 #[derive(Debug, Clone)]
@@ -11,7 +10,7 @@ pub struct Sim {
 }
 
 impl Sim {
-    pub fn new(input: &Input) -> Self {
+    pub fn new() -> Self {
         Sim {
             cost_function: ConvexFunction::new(1, 20, 0),
         }

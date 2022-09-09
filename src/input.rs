@@ -1,7 +1,4 @@
-use proconio::{
-    input,
-    marker::{Bytes, Chars},
-};
+use proconio::input;
 
 use crate::cost_function::CostType;
 
@@ -26,6 +23,7 @@ impl Input {
         Input { initial_x }
     }
 
+    #[allow(unused)]
     fn debug(result: &Result<Input, &str>) {
         println!("{:?}", result);
     }
