@@ -37,11 +37,6 @@ impl Sim {
         }
     }
 
-    fn change_state(&self, state: &mut State, rng: &mut Mcg128Xsl64) {
-        let val = rng.gen_range(-3, 4);
-        state.x += val;
-    }
-
     fn compute_score(&self, state: &mut State) {
         state.score = self.cost_function.f(state.x).unwrap();
     }
@@ -59,7 +54,7 @@ impl Sim {
             best_state = state.clone();
 
             // 近傍探索
-            sim.change_state(&mut state, &mut rng);
+            state.change(&mut rng);
 
             // スコア計算
             sim.compute_score(&mut state);
