@@ -49,8 +49,6 @@ impl Sim {
         let mut state = State::new(&input);
         let mut best_state = state.clone();
         while time::update() < 0.3 {
-            best_state = state.clone();
-
             // 近傍探索
             state.change(&mut rng);
 
@@ -60,6 +58,7 @@ impl Sim {
             Self::debug(&best_state, &state);
 
             mountain::update_state(&mut best_state, &mut state);
+            best_state = state.clone();
         }
 
         best_state.output();
