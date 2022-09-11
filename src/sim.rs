@@ -55,7 +55,7 @@ impl Sim {
             state.change(&mut rng);
 
             // スコア計算
-            sim.compute_score(&mut state);
+            self.compute_score(&mut state);
 
             Self::debug(&best_state, &state);
 
