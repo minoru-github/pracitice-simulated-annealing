@@ -58,6 +58,8 @@ impl Sim {
             Self::debug(&best_state, &state);
 
             mountain::update_state(&mut best_state, &mut state);
+            
+            // TODO: いらない疑惑
             best_state = state.clone();
         }
 
