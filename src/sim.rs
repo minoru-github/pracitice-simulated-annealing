@@ -44,8 +44,6 @@ impl Sim {
     pub fn run(&self) {
         let input = Input::read();
 
-        let sim = Sim::new();
-
         let mut rng: Mcg128Xsl64 = rand_pcg::Pcg64Mcg::new(890482);
 
         let mut state = State::new(&input);
