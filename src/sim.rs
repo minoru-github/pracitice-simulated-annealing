@@ -26,12 +26,16 @@ use state::State;
 
 #[derive(Debug, Clone)]
 pub struct Sim {
+    input:Input,
     cost_function: ConvexFunction,
 }
 
 impl Sim {
     pub fn new() -> Self {
+        let input = Input::read();
+
         Sim {
+            input,
             cost_function: ConvexFunction::new(1, 20, 0),
         }
     }
@@ -41,11 +45,9 @@ impl Sim {
     }
 
     pub fn run(&self) {
-        let input = Input::read();
-
         let mut rng: Mcg128Xsl64 = rand_pcg::Pcg64Mcg::new(890482);
 
-        let mut state = State::new(&input);
+        let mut state = State::new(&self.input);
         let mut best_state = state.clone();
         while time::update() < 0.3 {
             // 近傍探索
@@ -54,18 +56,16 @@ impl Sim {
             // スコア計算
             self.compute_score(&mut state);
 
-            Self::debug(&best_state, &state);
+            self.debug(&best_state, &state);
 
+            // 状態更新
             solver::mountain(&mut best_state, &mut state);
-            
-            // TODO: いらない疑惑
-            best_state = state.clone();
         }
 
         best_state.output();
     }
 
-    fn debug(best_state: &State, state: &State) {
+    fn debug(&self, best_state: &State, state: &State) {
         eprintln!(
             "x : {}, score {}, best_x:{}, best_score:{}",
             state.x, state.score, best_state.x, best_state.score
