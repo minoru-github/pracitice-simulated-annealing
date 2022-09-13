@@ -22,7 +22,6 @@ mod time;
 
 use cost_function::{ConvexFunction, CostFunction};
 use input::Input;
-use solver::mountain;
 use state::State;
 
 #[derive(Debug, Clone)]
@@ -57,7 +56,7 @@ impl Sim {
 
             Self::debug(&best_state, &state);
 
-            mountain::update_state(&mut best_state, &mut state);
+            solver::mountain(&mut best_state, &mut state);
             
             // TODO: いらない疑惑
             best_state = state.clone();
