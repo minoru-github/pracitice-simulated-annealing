@@ -15,3 +15,5 @@ pub fn update() -> f64 {
         now
     }
 }
+
+pub const LIMIT: f64 = 0.3;
