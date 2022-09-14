@@ -36,7 +36,7 @@ impl Sim {
 
         Sim {
             input,
-            cost_function: ConvexFunction::new(1, 20, 0),
+            cost_function: ConvexFunction::new(1, 0, 10),
         }
     }
 
