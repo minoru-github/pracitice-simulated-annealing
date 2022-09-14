@@ -62,9 +62,9 @@ mod tests {
 
     #[test]
     fn quartic_test() {
-        let cf = QuarticFunction::new(3, -4, -150, 0, 0);
-        assert_eq!(cf.f(-5).unwrap(), -1375);
+        let cf = QuarticFunction::new(3, -4, -180, 0, 0);
+        assert_eq!(cf.f(-5).unwrap(), -2125);
         assert_eq!(cf.f(0).unwrap(), 0);
-        assert_eq!(cf.f(6).unwrap(), -2376);
+        assert_eq!(cf.f(6).unwrap(), -3456);
     }
 }

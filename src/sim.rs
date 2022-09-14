@@ -20,14 +20,15 @@ mod solver;
 mod state;
 mod time;
 
-use cost_function::{ConvexFunction, CostFunction};
+use cost_function::{ConvexFunction, CostFunction, QuarticFunction};
 use input::Input;
 use state::State;
 
 #[derive(Debug, Clone)]
 pub struct Sim {
-    input:Input,
-    cost_function: ConvexFunction,
+    input: Input,
+    //cost_function: ConvexFunction,
+    cost_function: QuarticFunction,
 }
 
 impl Sim {
@@ -36,7 +37,8 @@ impl Sim {
 
         Sim {
             input,
-            cost_function: ConvexFunction::new(1, 0, 10),
+            //cost_function: ConvexFunction::new(1, 0, 10),
+            cost_function: QuarticFunction::new(3, -4, -180, 0, 0),
         }
     }
 
