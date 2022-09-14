@@ -27,12 +27,12 @@ impl State {
     pub fn new(input: &Input) -> Self {
         State {
             x: input.initial_x,
-            score: CostType::max_value(),
+            score: CostType::max_value() / 2,
         }
     }
 
     pub fn change(&mut self, rng: &mut Mcg128Xsl64) {
-        let val = rng.gen_range(-3, 4);
+        let val = rng.gen_range(-1, 2);
         self.x += val;
     }
 

@@ -51,17 +51,23 @@ impl Sim {
 
         let mut state = State::new(&self.input);
         let mut best_state = state.clone();
-        while time::update() < 0.3 {
+        loop {
+            let current_time = time::update();
+            if current_time >= time::LIMIT {
+                break;
+            }
+
             // 近傍探索
             state.change(&mut rng);
 
             // スコア計算
             self.compute_score(&mut state);
 
-            self.debug(&best_state, &state);
+            //self.debug(&best_state, &state);
 
             // 状態更新
-            solver::mountain(&mut best_state, &mut state);
+            //solver::mountain(&mut best_state, &mut state);
+            solver::sa(&mut best_state, &mut state, current_time, &mut rng)
         }
 
         best_state.output();
