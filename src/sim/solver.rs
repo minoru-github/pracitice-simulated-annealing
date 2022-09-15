@@ -52,7 +52,7 @@ pub fn sa(best_state: &mut State, state: &mut State, current_time: f64, rng: &mu
     // 最小化の場合
     let delta = state.score - best_state.score;
 
-    let prob = f64::exp(-delta as f64 / temperature).min(1.0);
+    let prob = f64::exp(-(delta as f64) / temperature).min(1.0);
     eprintln!(
         "best_x {}, x {}, delta {}, T {:?} , CNT {}, prob {:?}",
         best_state.x,
