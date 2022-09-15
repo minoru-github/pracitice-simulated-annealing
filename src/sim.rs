@@ -50,6 +50,8 @@ impl Sim {
         let mut rng: Mcg128Xsl64 = rand_pcg::Pcg64Mcg::new(890482);
 
         let mut state = State::new(&self.input);
+        self.compute_score(&mut state);
+        
         let mut best_state = state.clone();
         loop {
             let current_time = time::update();
