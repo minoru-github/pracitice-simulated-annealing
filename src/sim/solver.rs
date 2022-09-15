@@ -47,15 +47,23 @@ pub fn sa(best_state: &mut State, state: &mut State, current_time: f64, rng: &mu
         T
     };
 
-    // 最大化
+    // 最大化の場合
+    //let delta = best_state.score - state.score;
+    // 最小化の場合
     let delta = state.score - best_state.score;
-    // 最小化の場合は符号反転させる
-    let delta = -1 * delta;
 
-    let prob = f64::exp(delta as f64 / temperature).min(1.0);
-    eprintln!("best_x {}, x {}, delta {}, T {:?} , CNT {}, prob {:?}", best_state.x,state.x,  delta, temperature, unsafe{CNT}, prob);
+    let prob = f64::exp(-delta as f64 / temperature).min(1.0);
+    eprintln!(
+        "best_x {}, x {}, delta {}, T {:?} , CNT {}, prob {:?}",
+        best_state.x,
+        state.x,
+        delta,
+        temperature,
+        unsafe { CNT },
+        prob
+    );
 
-    if delta >= 0 {
+    if delta < 0 {
         eprintln!("best update");
         *best_state = state.clone();
     } else if rng.gen_bool(prob) {
